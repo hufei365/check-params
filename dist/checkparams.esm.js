@@ -1,32 +1,3 @@
-import regeneratorRuntime from 'regenerator-runtime';
-
-var regenerator = regeneratorRuntime;
-
-/*! *****************************************************************************
-Copyright (c) Microsoft Corporation.
-
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
-REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
-AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
-INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
-LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
-OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
-PERFORMANCE OF THIS SOFTWARE.
-***************************************************************************** */
-
-function __awaiter(thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-}
-
 var CONFIG = {};
 
 var internals = {
@@ -34,10 +5,15 @@ var internals = {
     if (typeof val === 'undefined') return false;
     if (isNaN(val)) return false;
     return true;
+  },
+  'required': function required(val) {
+    return !!val;
+  },
+  'string': function string(val) {
+    return typeof val === 'string';
   }
 };
 
-// import { Result, Rule, window, URL_CONFIG, API_CONFIG } from '../types/global'
 var TRUE_RESULT = Object.freeze({
   pass: true
 });
@@ -64,7 +40,7 @@ var checkParams = function checkParams(url, params) {
       return check(params);
     } catch (e) {
       // uploadLog( location, url, params )
-      // console.log( typeof window !== 'undefined' && window.location, url, params, CONFIG )
+      console.log(e, typeof window !== 'undefined' && window.location, url, params, CONFIG);
       return TRUE_RESULT;
     }
   }
@@ -118,7 +94,7 @@ var RETURN_TRUE = function RETURN_TRUE() {
 
 
 function getPagePathname() {
-  return window.location.pathname.replace(/(\/[a-z]+)-alias/gi, '$1');
+  return typeof window === 'undefined' ? '' : window.location.pathname.replace(/(\/[a-z]+)-alias/gi, '$1');
 }
 /**
  * 根据rule获取校验方法
@@ -202,7 +178,7 @@ function checkFnFactory() {
       result = next.value();
 
       if (result.pass === false) {
-        result.msg && console.log(result.msg);
+        // result.msg && console.log(result.msg)
         break;
       }
 
@@ -250,35 +226,5 @@ function traverse() {
 
   return curValue;
 }
-
-function run() {
-  return __awaiter(this, void 0, void 0, /*#__PURE__*/regenerator.mark(function _callee() {
-    return regenerator.wrap(function _callee$(_context) {
-      while (1) {
-        switch (_context.prev = _context.next) {
-          case 0:
-            console.log('start');
-            _context.next = 3;
-            return sleep(10);
-
-          case 3:
-            console.log('end');
-
-          case 4:
-          case "end":
-            return _context.stop();
-        }
-      }
-    }, _callee);
-  }));
-}
-
-function sleep(t) {
-  return new Promise(function (resolve) {
-    setTimeout(resolve, t);
-  });
-}
-
-run();
 
 export { checkParams, extendAPI, registerAPI };
